@@ -1,0 +1,12 @@
+pyspark==4.2.0
+pyarrow==25.0.1
+ijson==3.6.0
+pyiceberg[glue]==0.12.0
+awswrangler==3.17.1
+boto3==1.43.118
+requests==2.34.2
+beautifulsoup4==4.15.0
+duckdb==2.0.0
+dbt-core==1.12.6
+dbt-athena==1.11.1
+pyyaml

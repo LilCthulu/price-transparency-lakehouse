@@ -1,0 +1,3 @@
+pytest
+ruff==0.17.*
+sqlfluff==4.4.*
