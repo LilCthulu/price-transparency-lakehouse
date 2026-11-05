@@ -65,10 +65,10 @@ A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price
 
 ```
 Milestone: M1
-Last finished step: 0.12 (M0 gate: GO, no scope change, see notes/m0_findings.md)
-Next step: 1.4 scaffold; 1.1 AWS account needs Chaz
+Last finished step: 2.2 (M0, 1.4, 1.7, 2.1, 2.2 done; Terraform written and validated, not planned or applied)
+Next step: 1.1 and 1.2 AWS account (needs Chaz), then 1.3 Docker Desktop plus SSO, 1.5 plan
 Open questions: Midtown as source 12 or out of scope (currently out, STRETCH)
-Known broken: nothing known
+Known broken: nothing known. Local tools outside PATH: Java 21 and Terraform 1.17.1 in ~/tools; set JAVA_HOME and PYSPARK_PYTHON for pytest on Windows
 ```
 
 ---

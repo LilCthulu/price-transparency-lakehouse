@@ -65,3 +65,17 @@ From `scratch/m0_rates.py`. CPT codes counted under types CPT and HCPCS, 470 und
 - Is the scope still realistic? Yes.
 
 **Decision: GO, no scope change.** Three adjustments go into the build: filter 470 by code type, accept HCPCS for CPT codes, and rethink the file quality page lead once all 11 files are validated. Not yet checked: the other 6 files, so "no wide files" and "all clean" hold only for these five.
+
+## Real-file normalizer smoke test (added check, not in the checklist)
+
+`scratch/m2_smoke_silver.py` ran the reference tall and JSON readers on the five staged files, locally, with no Iceberg or AWS. The 10-code rows and dollar counts match the independent counts in `scratch/m0_rates.py`.
+
+| file | silver rows | 10-code rows | codes | dollar rows | min dollars | max dollars |
+| --- | --- | --- | --- | --- | --- | --- |
+| vumc_main | 897,184 | 4,195 | 10 | 4,110 | 0.01 | 68,033.03 |
+| ascension_west | 2,416,290 | 965 | 10 | 965 | 9.50 | 48,919.84 |
+| ascension_midtown | 299,398 | 437 | 10 | 437 | 3.80 | 56,673.86 |
+| vumc_clarksville | 778,675 | 774 | 9 | 770 | 4.44 | 39,973.31 |
+| tristar_centennial | 4,778,005 | 1,132 | 10 | 1,112 | 4.75 | 66,535.48 |
+
+The $0.01 rate at VUMC is not explained yet and may be a placeholder. Check it before the app shows minimum prices.
