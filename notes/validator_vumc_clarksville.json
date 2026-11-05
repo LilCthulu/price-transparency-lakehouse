@@ -1,0 +1,11 @@
+{
+ "file": "vumc_clarksville.json",
+ "validatorVersion": "2.6.1",
+ "dataDictionaryVersion": "3.0.0",
+ "timestamp": "2026-11-05T17:37:26.828Z",
+ "valid": true,
+ "errorCount": 0,
+ "alertCount": 0,
+ "errors": [],
+ "alerts": []
+}

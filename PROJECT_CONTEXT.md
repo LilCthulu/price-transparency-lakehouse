@@ -64,11 +64,11 @@ A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price
 ## A6. Current status (Chaz updates this block)
 
 ```
-Milestone: M0
-Last finished step:
-Next step:
-Open questions:
-Known broken:
+Milestone: M1
+Last finished step: 0.12 (M0 gate: GO, no scope change, see notes/m0_findings.md)
+Next step: 1.4 scaffold; 1.1 AWS account needs Chaz
+Open questions: Midtown as source 12 or out of scope (currently out, STRETCH)
+Known broken: nothing known
 ```
 
 ---
@@ -178,8 +178,8 @@ Vanderbilt and TriStar URLs were read from the live source pages on October 26, 
 | tristar_summit | TriStar Summit (Mt. Juliet ER) | JSON | see TriStar note | |
 | tristar_stonecrest | TriStar StoneCrest | JSON | see TriStar note | |
 | tristar_hendersonville | TriStar Hendersonville (Portland ER) | JSON | see TriStar note | |
-| ascension_west | Ascension Saint Thomas West (Midtown possibly a location in this file) | Tall CSV (v2.x in January) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620347580-1629025648_saint-thomas-west-hospital_standardcharges.csv | yes |
-| ascension_rutherford | Ascension Saint Thomas Rutherford | Tall CSV (v2.x in January) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620475842_saint-thomas-rutherford-hospital_standardcharges.csv | |
+| ascension_west | Ascension Saint Thomas West (Midtown is not in this file; it has its own, see m0_findings) | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620347580-1629025648_saint-thomas-west-hospital_standardcharges.csv | yes |
+| ascension_rutherford | Ascension Saint Thomas Rutherford | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620475842_saint-thomas-rutherford-hospital_standardcharges.csv | |
 
 **TriStar note.** All six files live in one Azure blob container. URL form:
 `https://stctrprodsnsvc00455826e6.blob.core.windows.net/pt-final-posting-files/<FILE>?si=dpx-pt-json-access-policy&spr=https&sv=2026-02-06&sr=c&sig=<scraped-at-runtime>`
@@ -460,6 +460,9 @@ RUN python -m venv /opt/pipeline && /opt/pipeline/bin/pip install --no-cache-dir
 18. The CMS JSON README links an example filename that does not exist; the real file is `v3_json_format_example.json`.
 19. Do not `pip install` pipeline packages into Airflow's environment; use the `/opt/pipeline` venv (B9).
 20. `dbt parse` and `sqlfluff` in CI need a profile; commit a `ci` profile with placeholder values for the no-AWS job and use sqlfluff's jinja templater (dialect `athena`) so linting never connects.
+21. Code 470 also appears as a revenue code (`RC`) and a local `TRIS-DRG`. Always filter 470 on code type `MS-DRG` or `DRG` (found in M0).
+22. CPT codes may be typed `HCPCS`; VUMC labels 80053 only that way. Accept both for the nine CPT codes (found in M0).
+23. JSON nests `attester_name` under `attestation`; CSV has it at the top level (found in M0).
 
 ## B14. Milestones and definition of done
 

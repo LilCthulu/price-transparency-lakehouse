@@ -1,0 +1,11 @@
+{
+ "file": "ascension_midtown.csv",
+ "validatorVersion": "2.6.1",
+ "dataDictionaryVersion": "3.0.0",
+ "timestamp": "2026-11-05T17:39:48.806Z",
+ "valid": true,
+ "errorCount": 0,
+ "alertCount": 0,
+ "errors": [],
+ "alerts": []
+}
