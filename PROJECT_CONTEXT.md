@@ -24,9 +24,9 @@ You are a senior data engineer pairing with Chaz on this repo. Follow these rule
 
 ## A2. The project in one paragraph
 
-A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price files (machine-readable files, MRFs) for 11 Middle Tennessee hospitals, runs the official CMS validator on each, streams each file into a splittable staged format, normalizes all formats with PySpark into Apache Iceberg tables on S3 cataloged in AWS Glue, models a gold star schema with dbt on Athena, orchestrates it weekly with Airflow, provisions AWS with Terraform, tests on every PR with GitHub Actions, and serves a public Streamlit app with two pages: a cost comparison (10 shoppable procedures by hospital and payer plan) and a file quality page (CMS validator results per file). Target: hiring managers at Nashville healthcare and healthtech companies. The plan document is the source of truth for scope; this file is the source of truth for implementation detail.
+A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price files (machine-readable files, MRFs) for 12 Middle Tennessee hospitals, runs the official CMS validator on each, streams each file into a splittable staged format, normalizes all formats with PySpark into Apache Iceberg tables on S3 cataloged in AWS Glue, models a gold star schema with dbt on Athena, orchestrates it weekly with Airflow, provisions AWS with Terraform, tests on every PR with GitHub Actions, and serves a public Streamlit app with two pages: a cost comparison (10 shoppable procedures by hospital and payer plan) and a file quality page (CMS validator results per file). Target: hiring managers at Nashville healthcare and healthtech companies. The plan document is the source of truth for scope; this file is the source of truth for implementation detail.
 
-**MVP is done when:** every box in the build checklist is checked, which means all 11 files flow end to end, `dbt build` passes in CI, the Streamlit app is live on a public URL, and the README, video, and resume bullets are published with real numbers.
+**MVP is done when:** every box in the build checklist is checked, which means all 12 files flow end to end, `dbt build` passes in CI, the Streamlit app is live on a public URL, and the README, video, and resume bullets are published with real numbers.
 
 ## A3. Owner calibration
 
@@ -39,7 +39,7 @@ A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price
 | Decision | Choice | Why |
 | --- | --- | --- |
 | Domain | CMS hospital price transparency MRFs, Middle Tennessee | Healthcare domain matches his Optum background and Nashville employers |
-| Scope | 11 files (B3), 10 procedures (B3) | Thin, complete slice |
+| Scope | 12 files (B3), 10 procedures (B3) | Thin, complete slice |
 | Cloud | AWS, account on the **Paid plan** (credits apply; Free plan accounts close after 6 months) | AWS is the most-requested cloud in postings |
 | Storage | S3 + Apache Iceberg tables + AWS Glue Data Catalog | Open table format, any engine can read |
 | Staging | Python streaming (ijson for JSON, pyarrow for CSV) before Spark | A CMS JSON file is one object; Spark cannot split it |
@@ -67,8 +67,8 @@ A recruiter-facing portfolio lakehouse. It downloads CMS-mandated hospital price
 Milestone: M1
 Last finished step: 2.2 (M0, 1.4, 1.7, 2.1, 2.2 done; Terraform written and validated, not planned or applied)
 Next step: 1.1 and 1.2 AWS account (needs Chaz), then 1.3 Docker Desktop plus SSO, 1.5 plan
-Open questions: Midtown as source 12 or out of scope (currently out, STRETCH)
-Known broken: nothing known. Local tools outside PATH: Java 21 and Terraform 1.17.1 in ~/tools; set JAVA_HOME and PYSPARK_PYTHON for pytest on Windows
+Open questions: none. Midtown added as source 12 on 2026-11-05 (Chaz approved)
+Known broken: nothing known. VUMC mixes physician fees with facility rates; M3 must separate them (see m0_findings). Local tools outside PATH: Java 21 and Terraform 1.17.1 in ~/tools; set JAVA_HOME and PYSPARK_PYTHON for pytest on Windows
 ```
 
 ---
@@ -127,7 +127,7 @@ price-transparency-lakehouse/
   pyproject.toml                # python deps + ruff + pytest config
   .env.example                  # AWS_PROFILE, AWS_REGION, LAKE_BUCKET, ... (no secrets)
   config/
-    sources.yml                 # the 11 sources (B3), link patterns per source page
+    sources.yml                 # the 12 sources (B3), link patterns per source page
   pipeline/
     __init__.py
     settings.py                 # reads env vars, one place for bucket names and paths
@@ -163,7 +163,7 @@ price-transparency-lakehouse/
 
 ## B3. Data sources
 
-### The 11 MVP files
+### The 12 MVP files
 
 Vanderbilt and TriStar URLs were read from the live source pages on October 26, 2026. Ascension URLs come from a January 12, 2026 third-party index and must be confirmed on the Ascension page during M0. Never hardcode these URLs in pipeline code: `config/sources.yml` stores the source page and a link pattern, and ingest reads the current link each run.
 
@@ -178,7 +178,8 @@ Vanderbilt and TriStar URLs were read from the live source pages on October 26, 
 | tristar_summit | TriStar Summit (Mt. Juliet ER) | JSON | see TriStar note | |
 | tristar_stonecrest | TriStar StoneCrest | JSON | see TriStar note | |
 | tristar_hendersonville | TriStar Hendersonville (Portland ER) | JSON | see TriStar note | |
-| ascension_west | Ascension Saint Thomas West (Midtown is not in this file; it has its own, see m0_findings) | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620347580-1629025648_saint-thomas-west-hospital_standardcharges.csv | yes |
+| ascension_west | Ascension Saint Thomas West (Midtown has its own file, see ascension_midtown) | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620347580-1629025648_saint-thomas-west-hospital_standardcharges.csv | yes |
+| ascension_midtown | Ascension Saint Thomas Midtown | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620347580-1780778969_saint-thomas-west-hospital_standardcharges.csv | yes |
 | ascension_rutherford | Ascension Saint Thomas Rutherford | Tall CSV (v3.0.0 on 2026-11-05) | https://healthcare.ascension.org/-/media/project/ascension/healthcare/price-transparency-files/tn-csv/620475842_saint-thomas-rutherford-hospital_standardcharges.csv | |
 
 **TriStar note.** All six files live in one Azure blob container. URL form:
@@ -188,7 +189,9 @@ where `<FILE>` is one of: `62-1113737_TRISTAR-CENTENNIAL-MEDICAL-CENTER_standard
 **Source pages (what ingest scrapes):**
 - Vanderbilt: https://www.vumc.org/pricetransparency/home (anchor tags linking to `finance.vumc.org/assets/pub/pt/`; match on the link label, for example "Vanderbilt Clarksville Hospital - Machine Readable")
 - TriStar: https://www.tristarhealth.com/patient-resources/patient-financial-resources/pricing-transparency-cms-required-file-of-standard-charges (anchors containing `pt-final-posting-files/`; match on the file name, for example `TRISTAR-CENTENNIAL-MEDICAL-CENTER`)
-- Ascension: https://healthcare.ascension.org/price-transparency (page structure unverified; expect anchors containing `tn-csv/`; match on `saint-thomas-west-hospital` and `saint-thomas-rutherford-hospital`). Some Ascension files have been published as `.zip`.
+- Ascension: https://healthcare.ascension.org/price-transparency (page structure unverified; expect anchors containing `tn-csv/`; match on the link label for West, Midtown, and Rutherford, because West and Midtown share a file name stem). Some Ascension files have been published as `.zip`.
+
+**Midtown.** Its file says `hospital_name` Saint Thomas West and carries West's type 2 NPI (1629025648); only `location_name` says Midtown. Never key or label a hospital from those fields. Use `source_id` and the display name in `config/sources.yml`.
 
 **Keys:** file names follow `<EIN>_<name>_standardcharges`, but TriStar reuses EIN 62-1113737 for five hospitals. `source_id` is the only hospital key in the pipeline. Locations inside a file go to a bridge table.
 
@@ -409,7 +412,7 @@ RUN python -m venv /opt/pipeline && /opt/pipeline/bin/pip install --no-cache-dir
   The base image is Debian bookworm, whose packaged Node.js is too old for the validator, which is why Node is copied from the official Node image. Set `JAVA_HOME` if Spark cannot find Java.
 - Mount the repo (at `/opt/repo`) into the containers and mount `~/.aws` for credentials, not read-only, because AWS SSO writes refreshed tokens to its cache; set `AWS_PROFILE` in the Compose environment and run `aws sso login` before a session of DAG runs.
 - Every pipeline step runs as a BashOperator calling the venv: for example `/opt/pipeline/bin/python -m pipeline.ingest --source-id {{ params.source_id }}` and `/opt/pipeline/bin/dbt build --project-dir /opt/repo/dbt --target prod`. Airflow's own environment imports nothing from the pipeline.
-- DAG `price_transparency`, schedule `@weekly`, `catchup=False`, `max_active_runs=1`. Tasks: `ingest` (dynamic task mapping over the 11 source_ids) >> `stage` (mapped, changed files only) >> `validate` (mapped) >> `load_silver` (one Spark job for all changed sources) >> `dbt_build` >> `export` >> `cleanup`. Unchanged sources short-circuit after ingest.
+- DAG `price_transparency`, schedule `@weekly`, `catchup=False`, `max_active_runs=1`. Tasks: `ingest` (dynamic task mapping over the 12 source_ids) >> `stage` (mapped, changed files only) >> `validate` (mapped) >> `load_silver` (one Spark job for all changed sources) >> `dbt_build` >> `export` >> `cleanup`. Unchanged sources short-circuit after ingest.
 - Retries: 2 with 5 minute delay on network tasks; none on dbt.
 
 ## B10. CI (`.github/workflows/ci.yml`)
@@ -468,7 +471,7 @@ RUN python -m venv /opt/pipeline && /opt/pipeline/bin/pip install --no-cache-dir
 
 - **M0, validate the data:** download the four M0 files (vumc_main, vumc_clarksville, tristar_centennial, ascension_west), run the validator, record in `notes/m0_findings.md`: format, layout, size, template version, v3.0 fields present, validator result, distinct payer names (first 50), whether Midtown appears in the ascension_west `location_name`, whether the 10 codes appear and how they are coded. Gate: Spark still justified, scope still realistic.
 - **M1, foundation:** repo scaffold, Terraform applied (all B8 resources), CI green on lint and tests with fixtures, Airflow image builds and the UI loads.
-- **M2, ingest and normalize:** all 11 sources fetched, validated, staged, loaded to silver; rerun with no upstream change skips everything; silver counts compared against the Trilliant index (cross-check only). Gate: first shareable artifact.
+- **M2, ingest and normalize:** all 12 sources fetched, validated, staged, loaded to silver; rerun with no upstream change skips everything; silver counts compared against the Trilliant index (cross-check only). Gate: first shareable artifact.
 - **M3, model and test:** dbt gold models, seeds, snapshot, tests, docs; `dbt build` green in CI through OIDC.
 - **M4, orchestrate and serve:** one Airflow DAG run end to end; Streamlit app live on a public URL.
 - **M5, package:** README in the order from the plan, architecture diagram, 2-minute video, LinkedIn post, resume bullets with real numbers.

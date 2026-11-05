@@ -1,4 +1,4 @@
-# The 11 MVP sources. match.field is "label" (anchor text) or "href" (link URL), match.pattern is a regex.
+# The 12 MVP sources. match.field is "label" (anchor text) or "href" (link URL), match.pattern is a regex.
 # Ascension West must match on label: its file name also appears on the Midtown link.
 pages:
   vumc: https://www.vumc.org/pricetransparency/home
@@ -56,6 +56,11 @@ sources:
     system: ascension
     format: csv
     match: {field: label, pattern: '^Ascension Saint Thomas West$'}
+  - source_id: ascension_midtown
+    display_name: Ascension Saint Thomas Midtown
+    system: ascension
+    format: csv
+    match: {field: label, pattern: '^Ascension Saint Thomas Midtown$'}
   - source_id: ascension_rutherford
     display_name: Ascension Saint Thomas Rutherford
     system: ascension

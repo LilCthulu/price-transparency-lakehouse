@@ -14,9 +14,9 @@ def page(system: str) -> str:
     return (PAGES / f"{system}.html").read_text(encoding="utf-8", errors="replace")
 
 
-def test_eleven_unique_sources():
-    assert len(SOURCES) == 11
-    assert len({s.source_id for s in SOURCES}) == 11
+def test_twelve_unique_sources():
+    assert len(SOURCES) == 12
+    assert len({s.source_id for s in SOURCES}) == 12
 
 
 @pytest.mark.parametrize("source", SOURCES, ids=lambda s: s.source_id)
@@ -29,6 +29,12 @@ def test_exactly_one_link_of_expected_format(source):
 def test_west_does_not_pick_up_midtown():
     west = next(s for s in SOURCES if s.source_id == "ascension_west")
     assert "620347580-1629025648" in select_link(west, page("ascension")).file_url
+
+
+def test_midtown_does_not_pick_up_west():
+    # Same file name stem as West; only the label and the second number in the name tell them apart.
+    midtown = next(s for s in SOURCES if s.source_id == "ascension_midtown")
+    assert "620347580-1780778969" in select_link(midtown, page("ascension")).file_url
 
 
 def test_rutherford_duplicate_anchor_is_one_link():

@@ -12,7 +12,7 @@ West and Rutherford match PROJECT_CONTEXT B3.
 
 ## 0.7 Midtown
 
-Midtown is not a location in the West file. West lists only `Ascension Saint Thomas West`. Midtown has its own file (the third link above), which lists `Ascension Saint Thomas Midtown`, but its `hospital_name` still says Saint Thomas West and it carries the same type 2 NPI (1629025648). It validates clean and has all 10 codes. Status: out of scope under the locked 11 files, `STRETCH` as source 12 until Chaz decides.
+Midtown is not a location in the West file. West lists only `Ascension Saint Thomas West`. Midtown has its own file (the third link above), which lists `Ascension Saint Thomas Midtown`, but its `hospital_name` still says Saint Thomas West and it carries the same type 2 NPI (1629025648). It validates clean and has all 10 codes. Status: added as source 12 on 2026-11-05, Chaz approved. It is not a copy of West: 72 MB against West's much larger file, and the MRI code 70553 has a median of $342.02 against West's $490.91.
 
 ## 0.5, 0.6, 0.8 Per-file facts
 
@@ -78,4 +78,20 @@ From `scratch/m0_rates.py`. CPT codes counted under types CPT and HCPCS, 470 und
 | vumc_clarksville | 778,675 | 774 | 9 | 770 | 4.44 | 39,973.31 |
 | tristar_centennial | 4,778,005 | 1,132 | 10 | 1,112 | 4.75 | 66,535.48 |
 
-The $0.01 rate at VUMC is not explained yet and may be a placeholder. Check it before the app shows minimum prices.
+## VUMC physician fees
+
+The $0.01 rate is one row: 74177, Cigna OAP All Commercial Plans, fee schedule 45, location `VWCH IMAGING READS AT VUH`, provider type Physician. It is a radiologist fee row, not a hospital price. Why this one row is a cent is still unknown, so treat it as a likely placeholder.
+
+The bigger finding: `vumc_main` publishes physician and anesthesia fees in the same file as facility rates. `additional_generic_notes` carries `Provider Type:` on 3,832 of its 4,195 10-code rows (91%): Physician 1,962, Anesthesiologist 1,556, Nurse Anesthetist 314. A keyword search of the notes found no such rows in `ascension_west`, `ascension_midtown`, `vumc_clarksville`, or `tristar_centennial`. `vumc_wilson` is not downloaded yet and may share the pattern.
+
+From `scratch/m2_penny.py`, median negotiated dollars at VUMC:
+
+| code | with provider type | no provider type in the notes |
+| --- | --- | --- |
+| 66984 cataract | 158.76 | 2,514.63 |
+| 29881 knee scope | 754.53 | 3,565.21 |
+| 74177 CT | 115.73 | 380.14 |
+
+The second column holds only rows where the note exists without a provider type. Rows with an empty note have higher medians still (for 66984, 6,996.00).
+
+Without a fix, VUMC looks far cheaper than TriStar and Ascension for reasons that have nothing to do with price. M3 must flag these rows from the note and keep them out of hospital-to-hospital comparisons. Silver already keeps the note, so nothing needs reloading. Physician fees can still appear separately, labeled as such.
