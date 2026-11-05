@@ -1,0 +1,63 @@
+# The 11 MVP sources. match.field is "label" (anchor text) or "href" (link URL), match.pattern is a regex.
+# Ascension West must match on label: its file name also appears on the Midtown link.
+pages:
+  vumc: https://www.vumc.org/pricetransparency/home
+  tristar: https://www.tristarhealth.com/patient-resources/patient-financial-resources/pricing-transparency-cms-required-file-of-standard-charges
+  ascension: https://healthcare.ascension.org/price-transparency
+
+sources:
+  - source_id: vumc_main
+    display_name: Vanderbilt University Medical Center
+    system: vumc
+    format: csv
+    match: {field: label, pattern: '^Vanderbilt University Medical Center - Machine Readable'}
+  - source_id: vumc_wilson
+    display_name: Vanderbilt Wilson County Hospital
+    system: vumc
+    format: csv
+    match: {field: label, pattern: '^Vanderbilt Wilson County Hospital - Machine Readable'}
+  - source_id: vumc_clarksville
+    display_name: Vanderbilt Clarksville Hospital
+    system: vumc
+    format: json
+    match: {field: label, pattern: '^Vanderbilt Clarksville Hospital - Machine Readable'}
+  - source_id: tristar_centennial
+    display_name: TriStar Centennial Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-CENTENNIAL-MEDICAL-CENTER_standardcharges'}
+  - source_id: tristar_skyline
+    display_name: TriStar Skyline Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-SKYLINE-MEDICAL-CENTER_standardcharges'}
+  - source_id: tristar_southern_hills
+    display_name: TriStar Southern Hills Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-SOUTHERN-HILLS-MEDICAL-CENTER_standardcharges'}
+  - source_id: tristar_summit
+    display_name: TriStar Summit Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-SUMMIT-MEDICAL-CENTER_standardcharges'}
+  - source_id: tristar_stonecrest
+    display_name: TriStar StoneCrest Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-STONECREST-MEDICAL-CENTER_standardcharges'}
+  - source_id: tristar_hendersonville
+    display_name: TriStar Hendersonville Medical Center
+    system: tristar
+    format: json
+    match: {field: href, pattern: 'TRISTAR-HENDERSONVILLE-MEDICAL-CENTER_standardcharges'}
+  - source_id: ascension_west
+    display_name: Ascension Saint Thomas West
+    system: ascension
+    format: csv
+    match: {field: label, pattern: '^Ascension Saint Thomas West$'}
+  - source_id: ascension_rutherford
+    display_name: Ascension Saint Thomas Rutherford
+    system: ascension
+    format: csv
+    match: {field: label, pattern: '^Ascension Saint Thomas Rutherford$'}

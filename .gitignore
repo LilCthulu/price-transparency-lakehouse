@@ -6,3 +6,5 @@ target/
 logs/
 __pycache__/
 .venv/
+*.tfvars
+.terraform.lock.hcl.bak
