@@ -530,7 +530,7 @@ def normalize_header(h: str) -> str:
     'standard_charge | Aetna | PPO | Negotiated_Dollar' -> 'standard_charge|Aetna|PPO|negotiated_dollar'
     CMS says headers are case-insensitive, so keywords are lowercased; payer names are data.
     """
-    parts = [p.strip() for p in h.replace("﻿", "").split("|")]
+    parts = [p.strip() for p in h.replace("\ufeff", "").split("|")]
     head = parts[0].lower()
     is_wide_payer_col = (
         head in PAYER_PREFIXES
